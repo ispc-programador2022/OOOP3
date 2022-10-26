@@ -15,10 +15,12 @@ class Scraper:
         # Traigo todas las tablas (27)
         jornadas = contenido.find_all('table', class_='jor agendas')
 
+        # Lista para guardar cada fila
+        filas = []
+
         for jornada in jornadas:
             # Obtengo el nombre de cada jornada
             jornadaNum = jornada.find('caption').text
-            print(f'\n\n{jornadaNum}\n{"-"*35}')
 
             # Busco el cuerpo de la tabla, donde se encuentra la información que necesitamos, luego obtengo todas las filas
             for equipos in jornada.find_all('tbody'):
@@ -38,5 +40,15 @@ class Scraper:
                         resultadoLocal = '-'
                         resultadoVisitante = '-'
 
-                    print(
-                        f'{local}({resultadoLocal})   {resultado}   {visitante}({resultadoVisitante})')
+                    filas.append(
+                        Fila(jornadaNum, local, resultadoLocal, visitante, resultadoVisitante))
+        return filas
+
+
+class Fila:
+    def __init__(self, jornada, local, resultado_local, visitante, resultado_visitante):
+        self.jornada = jornada
+        self.local = local
+        self.resultado_local = resultado_local
+        self.visitante = visitante
+        self.resultado_visitante = resultado_visitante

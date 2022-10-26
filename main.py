@@ -1,4 +1,4 @@
-from scraper import Scraper
+from scraper import Scraper, Fila
 
 
 def main():
@@ -6,7 +6,12 @@ def main():
 
     s1 = Scraper(url)
     contenido = s1.parser()
-    s1.extraer(contenido)
+    filas = s1.extraer(contenido)
+
+    for fila in filas:
+        '''Obtengo los datos de cada fila'''
+        print(fila.jornada, fila.local, fila.resultado_local,
+              fila.visitante, fila.resultado_visitante)
 
 
 if __name__ == '__main__':
