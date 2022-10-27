@@ -1,21 +1,22 @@
-![Banner ISPC - TSCDIA](banner.png)
+![Banner ISPC - TSCDIA](assets/banner.png)
 ## Proyecto Integrador 2022 - Proyecto Gamma
 # Grupo OOOP3
 
 ### **Tema:**
 - ## *Resultados torneo argentino de futbol (temporada 2022)*
-![Resultados torneo argentino de futbol](LPF_Ok.jpg)
+![Resultados torneo argentino de futbol](assets/LPF_Ok.jpg)
 
 #
 ### **Herramientas a utilizar:**
 - *Python* *(web scraping, gestion de BBDD y visualización de de tablas con la libreria matplotlib)*
 
-    ![Logo Python](./python.png)       
-    ![Logo Matplotlib](matplotlib.png)
+    ![Logo Python](assets/python-3.png)  
+
+    ![Logo Matplotlib](assets/matplotlib.png)
 
 - *SQLite (BBDD)*
 
-    ![Logo SQLite](./sqlite.png)
+    ![Logo SQLite](assets/sqlite.png)
 
 #
 ### **Participantes:**
