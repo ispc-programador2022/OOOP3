@@ -1,17 +1,20 @@
-from scraper import Scraper, Fila
+from agregar_datos import Agregar
+from scraper import Scraper
+from script_sql import Bbdd
 
 
 def main():
+    bd = Bbdd()
+    bd.iniciar()
+    bd.crear_tabla()
     url = 'https://ar.marca.com/claro/futbol/primera-division/fixture.html'
 
     s1 = Scraper(url)
     contenido = s1.parser()
     filas = s1.extraer(contenido)
 
-    for fila in filas:
-        '''Obtengo los datos de cada fila'''
-        print(fila.jornada, fila.local, fila.resultado_local,
-              fila.visitante, fila.resultado_visitante)
+    agregar = Agregar(bd, filas)
+    agregar.agregar_datos()
 
 
 if __name__ == '__main__':
