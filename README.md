@@ -8,13 +8,13 @@
 
 #
 ### **Herramientas a utilizar:**
-- *Python* *(web scraping, gestion de BBDD, visualización de de tablas con la libreria pandas y graficos con matplotlib)*
+- *Python* *(web scraping, gestion de BBDD, visualización de de tablas con la libreria Pandas y graficos con Plotly Dash)*
 
     ![Logo Python](assets/python-3.png)  
 
     ![Logo Pandas](assets/pandas.png)  
 
-    ![Logo Matplotlib](assets/matplotlib.png)
+    ![Logo Plotly](assets/plotly.png)
 
 - *SQLite (BBDD)*
 

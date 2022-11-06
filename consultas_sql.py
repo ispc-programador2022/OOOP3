@@ -1,4 +1,3 @@
-from itertools import count
 import sqlite3
 from script_sql import Bbdd
 import pandas as pd
@@ -263,7 +262,7 @@ class ConsultasSQL(Bbdd):
     def query_mas_ganador_local(self, tabla=False):
         # Contamos los resultados solamente de los que se jugaron de forma local
         query_local_ganador = '''SELECT * , sum(GF)-sum(GC) as GT,
-					sum(PG*3 + PE) as Puntos, ROUND(CAST(PG AS FLOAT)/PJ,2) as "Promedio PG/PJ"
+					sum(PG*3 + PE) as Puntos, ROUND(CAST(PG AS FLOAT)/PJ,2)*100 as "Promedio PG/PJ"
 				from (
 					SELECT equipo as Equipo,  
 						sum( case when "equipo_local" = "equipo" THEN 1 
@@ -288,7 +287,7 @@ class ConsultasSQL(Bbdd):
         print(f'''
 			El equipo con mayor cantidad de partidos ganados de local es {resultado[0].upper()}.
 			Con {resultado[2]} partidos ganados entre {resultado[1]} partidos disputados.
-			Su promedio fue de {resultado[9]}% de efectividad de local
+			Su promedio fue de {resultado[9]} % de efectividad de local
 		''')
 
         conexion = sqlite3.connect('torneo_argentino.db')
@@ -357,10 +356,12 @@ class ConsultasSQL(Bbdd):
         print(
             f'\tEl equipo que recibió más goles es: {resultado[0].upper()}, con un total de {resultado[1]} goles.')
 
+        conexion = sqlite3.connect('torneo_argentino.db')
+        df = pd.read_sql_query(query, conexion)
         if tabla:
-            conexion = sqlite3.connect('torneo_argentino.db')
-            df = pd.read_sql_query(query, conexion)
             print(df)
+        
+        return df
 
     # Script para obtener el equipo con más victorias de visitante
 
@@ -390,15 +391,3 @@ class ConsultasSQL(Bbdd):
 
         return df
 
-
-a = ConsultasSQL()
-
-a.query_goles_jornada()
-a.query_promedio_resultados()
-a.query_mas_goles_jornada('Jornada 21')
-a.query_equipo_puntero()
-a.query_equipo_perdedor()
-a.query_equipos_goleador()
-a.query_goles_contra()
-a.query_mas_ganador_local()
-a.query_victorias_visitante()
