@@ -1,4 +1,3 @@
-from itertools import count
 import sqlite3
 from script_sql import Bbdd
 import pandas as pd
@@ -62,6 +61,36 @@ class ConsultasSQL(Bbdd):
 				group by equipo
 				ORDER by {order_by}'''
         return query
+
+    def query_resultados(self, tabla=False):
+        # Se realiza el conteo de partidos ganados de local, visitante y empates.
+        query = '''SELECT 
+		sum(CASE  WHEN "goles_local" > "goles_visitante" THEN 1 ELSE 0 END) as "Victorias Locales",
+		sum(CASE  WHEN "goles_local" < "goles_visitante" THEN 1 ELSE 0 END) as "Victorias Visitante",
+		sum(CASE  WHEN "goles_local" = "goles_visitante" THEN 1 ELSE 0 END) as "Empates"
+		FROM temporada_2022'''
+        resultados = self.select(query, 'fetchone')
+
+        conexion = sqlite3.connect('torneo_argentino.db')
+        df = pd.read_sql_query(query, conexion)
+
+        print('')
+        index = 0
+        for i in df:
+            if index == 0:
+                print(f'\t - {i} = {resultados[index]}')
+                index += 1
+            else:
+                print(f'\t - {i} = {resultados[index]} ')
+                index += 1
+        print('')
+
+        if tabla:
+            # Se imprime los datos de la tabla con Pandas
+            print('\n', df, '\n')
+
+        # Devolvemos los resultados para generar graficos de ser necesario
+        return df
 
     # Promedio de resultados
     # Definimos la fucion con el parametro "Formato" para que nos muestre con que opción mostrar los resultados de la consulta
@@ -263,7 +292,7 @@ class ConsultasSQL(Bbdd):
     def query_mas_ganador_local(self, tabla=False):
         # Contamos los resultados solamente de los que se jugaron de forma local
         query_local_ganador = '''SELECT * , sum(GF)-sum(GC) as GT,
-					sum(PG*3 + PE) as Puntos, ROUND(CAST(PG AS FLOAT)/PJ,2) as "Promedio PG/PJ"
+					sum(PG*3 + PE) as Puntos, ROUND(CAST(PG AS FLOAT)/PJ,2)*100 as "Promedio PG/PJ"
 				from (
 					SELECT equipo as Equipo,  
 						sum( case when "equipo_local" = "equipo" THEN 1 
@@ -288,7 +317,7 @@ class ConsultasSQL(Bbdd):
         print(f'''
 			El equipo con mayor cantidad de partidos ganados de local es {resultado[0].upper()}.
 			Con {resultado[2]} partidos ganados entre {resultado[1]} partidos disputados.
-			Su promedio fue de {resultado[9]}% de efectividad de local
+			Su promedio fue de {resultado[9]} % de efectividad de local
 		''')
 
         conexion = sqlite3.connect('torneo_argentino.db')
@@ -304,7 +333,7 @@ class ConsultasSQL(Bbdd):
 
     # Script para la tabla de goles por jornada
     def query_goles_jornada(self):
-        query = '''SELECT jornada as Jornada,  SUM(goles_local + goles_visitante) as "Total goles"
+        query = '''SELECT jornada as Jornada,  SUM(goles_local) as 'Goles Local', sum(goles_visitante) 'Goles Visitante', SUM(goles_local+goles_visitante) as 'Total de goles'
                 FROM temporada_2022
                 GROUP BY jornada
                 ORDER BY CAST(SUBSTR(Jornada, 9) as UNSIGNED INTEGER)
@@ -357,10 +386,12 @@ class ConsultasSQL(Bbdd):
         print(
             f'\tEl equipo que recibió más goles es: {resultado[0].upper()}, con un total de {resultado[1]} goles.')
 
+        conexion = sqlite3.connect('torneo_argentino.db')
+        df = pd.read_sql_query(query, conexion)
         if tabla:
-            conexion = sqlite3.connect('torneo_argentino.db')
-            df = pd.read_sql_query(query, conexion)
             print(df)
+
+        return df
 
     # Script para obtener el equipo con más victorias de visitante
 
@@ -392,13 +423,4 @@ class ConsultasSQL(Bbdd):
 
 
 a = ConsultasSQL()
-
-a.query_goles_jornada()
-a.query_promedio_resultados()
-a.query_mas_goles_jornada('Jornada 21')
-a.query_equipo_puntero()
-a.query_equipo_perdedor()
-a.query_equipos_goleador()
-a.query_goles_contra()
-a.query_mas_ganador_local()
-a.query_victorias_visitante()
+a.crear_tabla()
