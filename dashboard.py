@@ -308,10 +308,10 @@ app.layout = dbc.Container([
 
                         html.A('ISPC', href='https://www.ispc.edu.ar/',
                                target='_blank', className='text-light fw-bold'),
-                        html.P(' - Proyecto Integrador 2022 - Gamma',
+                        html.P(' - Proyecto Integrador 2022 - Gamma - OOOP3',
                                className='text-light')
                     ], className='d-flex', style={'gap': '10px'}),
-                    'Martín Oller - Martina Octtinger',
+                    html.P('Martín Oller - Martina Octtinger'),
                     html.Div([
                         html.I(
                             className="fa-brands fa-github"),

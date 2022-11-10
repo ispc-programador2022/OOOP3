@@ -31,8 +31,6 @@
 
 - _Octtinger Martina_ - martiocttinger@gmail.com
 - _Oller Martin Ariel_ - martinoller@hotmail.com
-- _Oviedo Brian_ - brianoviedo77@gmail.com
-
 ---
 
 ## Instrucciones
@@ -42,6 +40,4 @@ $ git clone https://github.com/ispc-programador2022/OOOP3.git
 $ cd ../path/to/the/file
 $ pip install requirements.txt -r
 $ python main.py
-$ python consultas_sql.py
-$ python dashboard.py
 ```

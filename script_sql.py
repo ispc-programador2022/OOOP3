@@ -5,10 +5,9 @@ class Bbdd:
         try:
             #Creamos la base de datos, si ya está creada se va a conectar a la misma, no la sobreescribe.
             self.conexion = sqlite3.connect('./torneo_argentino.db')
-            print('Conexion abierta')
             #Creamos un cursor para realizar las operaciones dentro de la base de datos
             self.cursor = self.conexion.cursor()
-            print('Cursor iniciado')
+            
         except Exception as e:
             #Si llega a haber algún inconveniente la excepción nos mostrará donde radica para poder intervenir
             print(f'Surgió un error ({e})')
@@ -26,12 +25,11 @@ class Bbdd:
                           equipo_visitante text not null,
                           goles_visitante int not null,
                           UNIQUE (jornada,equipo_local,equipo_visitante))''')
-            print('Tabla "temporada_2022" creada')
             #Commit para confirmar los cambios efectuados
             self.conexion.commit()
             #Cerramos la base de datos
             self.conexion.close()
-            print('Conexion cerrada')
+            
         except Exception as e:
             #Si llega a haber algún inconveniente la excepción nos mostrará donde radica para poder intervenir
             print(f'Surgió un error ({e})')
@@ -52,7 +50,7 @@ class Bbdd:
                 resultado=self.cursor.fetchone()
             #Cerramos la base de datos
             self.conexion.close()
-            print('Conexion cerrada')
+            
             return resultado
         except Exception as e:
             #Si llega a haber algún inconveniente la excepción nos mostrará donde radica para poder intervenir
@@ -70,8 +68,8 @@ class Bbdd:
             self.conexion.commit()
             #Cerramos la base de datos
             self.conexion.close()
-            print('Conexion cerrada')
+            
         except Exception as e:
             #Si llega a haber algún inconveniente la excepción nos mostrará donde radica para poder intervenir
-            print(f'Surgió un error ({e})')
+            return e
             
