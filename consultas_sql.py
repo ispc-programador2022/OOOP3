@@ -62,7 +62,8 @@ class ConsultasSQL(Bbdd):
 				ORDER by {order_by}'''
         return query
 
-    def query_resultados(self, tabla=False):
+    # Como parametros indicamos si se visualiza los datos en la terminal o no. Por defecto no se muestra
+    def query_resultados(self, terminal=False):
         # Se realiza el conteo de partidos ganados de local, visitante y empates.
         query = '''SELECT 
 		sum(CASE  WHEN "goles_local" > "goles_visitante" THEN 1 ELSE 0 END) as "Victorias Locales",
@@ -74,28 +75,28 @@ class ConsultasSQL(Bbdd):
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
 
-        print('')
-        index = 0
-        for i in df:
-            if index == 0:
-                print(f'\t - {i} = {resultados[index]}')
-                index += 1
-            else:
-                print(f'\t - {i} = {resultados[index]} ')
-                index += 1
-        print('')
+         # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print('')
+            index = 0
+            for i in df:
+                if index == 0:
+                    print(f'\t - {i} = {resultados[index]}')
+                    index += 1
+                else:
+                    print(f'\t - {i} = {resultados[index]} ')
+                    index += 1
+            print('')
 
-        if tabla:
             # Se imprime los datos de la tabla con Pandas
-            print('\n', df, '\n')
+            #print('\n', df, '\n')
 
         # Devolvemos los resultados para generar graficos de ser necesario
         return df
 
     # Promedio de resultados
-    # Definimos la fucion con el parametro "Formato" para que nos muestre con que opción mostrar los resultados de la consulta
-    # Por defecto el parametro va a ser como tabla.
-    def query_promedio_resultados(self, tabla=False):
+    # Definimos la fucion con el parametro "terminal" para que nos muestre en terminal o no. Por defecto no se muestra
+    def query_promedio_resultados(self, terminal=False):
         # Se realiza el conteo de partidos ganados de local, visitante y empates y se los divide por el total de partidos
         # Para que nos de como resultado números decimales en lugar de dividir por 100, realizamos la multiplicación por 0.01 y todo eso lo redondeamos a 2 valores decimales
         query = '''SELECT count(jornada) as "Cantidad de partidos",
@@ -110,20 +111,20 @@ class ConsultasSQL(Bbdd):
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
 
-        print('')
-        index = 0
-        for i in df:
-            if index == 0:
-                print(f'\t - {i} = {resultados[index]}')
-                index += 1
-            else:
-                print(f'\t - {i} = {resultados[index]} %')
-                index += 1
-        print('')
+         # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print('')
+            index = 0
+            for i in df:
+                if index == 0:
+                    print(f'\t - {i} = {resultados[index]}')
+                    index += 1
+                else:
+                    print(f'\t - {i} = {resultados[index]} %')
+                    index += 1
+            print('')
 
-        if tabla:
-            # Se imprime los datos de la tabla con Pandas
-            print('\n', df, '\n')
+            #print('\n', df, '\n')
 
         # Devolvemos los resultados para generar graficos de ser necesario
         return df
@@ -221,7 +222,7 @@ class ConsultasSQL(Bbdd):
                 else:
                     print('Los equipos goleadores son: ')
 
-                # Le damos formato de equipo,equipo,equipo,etc...
+                # Le damos formato de equipo, equipo, equipo, etc...
                 cont = 0
                 for equipo in equipos:
                     if cont == 0:
@@ -237,59 +238,58 @@ class ConsultasSQL(Bbdd):
         return jornada_goleador
 
     # Equipo con mas puntos en el campeonato.
-    # Como parametros indicamos si se visualiza la tabla completa o no. Por defecto no se muestra
-    def query_equipo_puntero(self, tabla=False):
+    # Como parametros indicamos si se visualiza los datos en la terminal o no. Por defecto no se muestra
+    def query_equipo_puntero(self, terminal=False):
         # La tabla la ordenamos segun del puntos totales de forma descendiente
         query_puntero = self.query_tabla_posiciones('Puntos desc')
 
         # Configuramos para que muestre el equipo puntero
         resultado = self.select(query_puntero, 'fetchone')
-        print(f'''
-			El equipo puntero del campeonato es {resultado[0].upper()}.
-			Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
-			- Ganó {resultado[2]} 
-			- Empató {resultado[3]}
-			- Perdió {resultado[4]}
-			Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
-		''')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query_puntero, conexion)
-        # Damos a elegir si se quiere mostrar la tabla
-        if tabla:
+        
+         # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'''
+El equipo puntero del campeonato es {resultado[0].upper()}.
+Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
+- Ganó {resultado[2]} 
+- Empató {resultado[3]}
+- Perdió {resultado[4]}
+Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
+		    ''')
             print('\nTABLA DE POSICIONES COMPLETA\n')
-            print(df.head(27))
+            print(df.head(28))
             print('\n')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
 
     # Equipo mas goleador
-    # Como parametros indicamos si se visualiza la tabla completa o no. Por defecto no se muestra
-    def query_equipos_goleador(self, tabla=False):
+    # Como parametros indicamos si se visualiza los datos en la terminal o no. Por defecto no se muestra
+    def query_equipos_goleador(self, terminal=False):
         # Configuramos para que muestre el equipo con mas goles
         query_goleador = self.query_tabla_posiciones('GF desc')
         resultado = self.select(query_goleador, 'fetchone')
-        print(f'''
-			El equipo goleador del campeonato es {resultado[0].upper()}.
-			Con {resultado[5]} goles convertidos.
-		''')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query_goleador, conexion)
 
-        # Damos a elegir si se quiere mostrar la tabla
-        if tabla:
-            print('\nTABLA DE POSICIONES COMPLETA\n')
-            print(df.head(27))
+         # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'''
+El equipo goleador del campeonato es {resultado[0].upper()}.
+Con {resultado[5]} goles convertidos.
+            ''')
+            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
+            print(df.head(5))
             print('\n')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
 
     # Equipo con mas victorias de local.
-    # Como parametros indicamos si se visualiza la tabla completa o no. Por defecto no se muestra
-    def query_mas_ganador_local(self, tabla=False):
+    # Como parametros indicamos si se visualiza los datos en la terminal o no. Por defecto no se muestra
+    def query_mas_ganador_local(self, terminal=False):
         # Contamos los resultados solamente de los que se jugaron de forma local
         query_local_ganador = '''SELECT * , sum(GF)-sum(GC) as GT,
 					sum(PG*3 + PE) as Puntos, ROUND(CAST(PG AS FLOAT)/PJ,2)*100 as "Promedio PG/PJ"
@@ -314,25 +314,25 @@ class ConsultasSQL(Bbdd):
 				ORDER by "Promedio PG/PJ" desc '''
 
         resultado = self.select(query_local_ganador, 'fetchone')
-        print(f'''
-			El equipo con mayor cantidad de partidos ganados de local es {resultado[0].upper()}.
-			Con {resultado[2]} partidos ganados entre {resultado[1]} partidos disputados.
-			Su promedio fue de {resultado[9]} % de efectividad de local
-		''')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query_local_ganador, conexion)
-        # Damos a elegir si se quiere mostrar la tabla
-        if tabla:
-            print('\nTABLA DE POSICIONES COMPLETA\n')
-            print(df.head(27))
+
+        # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'''
+El equipo con mayor cantidad de partidos ganados de local es {resultado[0].upper()}.
+Con {resultado[2]} partidos ganados entre {resultado[1]} partidos disputados.
+Su promedio fue de {resultado[9]} % de efectividad de local
+            ''')
+            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
+            print(df.head(5))
             print('\n')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
 
     # Script para la tabla de goles por jornada
-    def query_goles_jornada(self):
+    def query_goles_jornada(self, terminal=False):
         query = '''SELECT jornada as Jornada,  SUM(goles_local) as 'Goles Local', sum(goles_visitante) 'Goles Visitante', SUM(goles_local+goles_visitante) as 'Total de goles'
                 FROM temporada_2022
                 GROUP BY jornada
@@ -341,39 +341,40 @@ class ConsultasSQL(Bbdd):
 
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
-        print(df)
+        # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'\n{df}')
 
         # Devolvemos los resultados para realizar los gráficos
         return df
 
-    def query_equipo_perdedor(self, tabla=False):
+    def query_equipo_perdedor(self, terminal=False):
         # La tabla la ordenamos segun del puntos totales de forma ascendiente
         query_puntero = self.query_tabla_posiciones('Puntos asc')
 
         # Configuramos para que muestre el equipo con menos puntos
         resultado = self.select(query_puntero, 'fetchone')
-        print(f'''
-			El equipo con menos puntos del campeonato es {resultado[0].upper()}.
-			Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
-			- Ganó {resultado[2]} 
-			- Empató {resultado[3]}
-			- Perdió {resultado[4]}
-			Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
-		''')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query_puntero, conexion)
 
-        # Damos a elegir si se quiere mostrar la tabla
-        if tabla:
-            print('\nTABLA DE POSICIONES COMPLETA\n')
-            print(df.head(27))
+        # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'''
+El equipo con menos puntos del campeonato es {resultado[0].upper()}.
+Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
+- Ganó {resultado[2]} 
+- Empató {resultado[3]}
+- Perdió {resultado[4]}
+Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
+            ''')
+            print('\nTABLA DE POSICIONES (Los 5 peores)\n')
+            print(df.head(5))
             print('\n')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
 
-    def query_goles_contra(self, tabla=False):
+    def query_goles_contra(self, terminal=False):
         query = '''
 				SELECT equipo as Equipo, SUM(case when equipos_2022.equipo = temporada_2022.equipo_local then goles_visitante else goles_local end) as "Goles en contra"
 				FROM equipos_2022 INNER JOIN temporada_2022
@@ -383,19 +384,23 @@ class ConsultasSQL(Bbdd):
 				'''
 
         resultado = self.select(query, 'fetchone')
-        print(
-            f'\tEl equipo que recibió más goles es: {resultado[0].upper()}, con un total de {resultado[1]} goles.')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
-        if tabla:
-            print(df)
+
+        # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(
+                f'\nEl equipo que recibió más goles es: {resultado[0].upper()}, con un total de {resultado[1]} goles.')
+
+            print('\nTABLA DE POSICIONES (Los 5 peores)\n')
+            print(df.head(5))
+            print('\n')
 
         return df
 
     # Script para obtener el equipo con más victorias de visitante
 
-    def query_victorias_visitante(self, tabla=False):
+    def query_victorias_visitante(self, terminal=False):
         # PVV: promedio de victorias como visitante; VV: victorias visitantes
         query = '''
 			SELECT equipo as Equipo, victorias_visitantes as VV, PJ, (ROUND(CAST(victorias_visitantes AS FLOAT)/PJ,2))*100 as PVV
@@ -409,18 +414,20 @@ class ConsultasSQL(Bbdd):
 		'''
         resultado = self.select(query, 'fetchone')
 
-        print(f'''
-			El equipo con más victorias de visitantes es {resultado[0].upper()}
-				- Partidos jugados de visitante: {resultado[2]}
-				- Su promedio es de {resultado[3]}% de efectividad de visitante.
-			''')
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
-        if tabla:
-            print(df)
+
+        # Damos a elegir si se quiere mostrar por terminal
+        if terminal:
+            print(f'''
+El equipo con más victorias de visitantes es {resultado[0].upper()}
+- Partidos jugados de visitante: {resultado[2]}
+- Partidos ganados: {resultado[1]}
+- Su promedio es de {resultado[3]}% de efectividad de visitante.
+                ''')
+            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
+            print(df.head(5))
+            print('\n')
 
         return df
 
-
-a = ConsultasSQL()
-a.crear_tabla()
