@@ -71,7 +71,6 @@ class ConsultasSQL(Bbdd):
 		sum(CASE  WHEN "goles_local" = "goles_visitante" THEN 1 ELSE 0 END) as "Empates"
 		FROM temporada_2022'''
         resultados = self.select(query, 'fetchone')
-
         conexion = sqlite3.connect('torneo_argentino.db')
         df = pd.read_sql_query(query, conexion)
 
@@ -81,10 +80,10 @@ class ConsultasSQL(Bbdd):
             index = 0
             for i in df:
                 if index == 0:
-                    print(f'\t - {i} = {resultados[index]}')
+                    print(f'\t - {self.color_nombre(i)} = {self.descripcion_color(resultados[index])}')
                     index += 1
                 else:
-                    print(f'\t - {i} = {resultados[index]} ')
+                    print(f'\t - {self.color_nombre(i)} = {self.descripcion_color(resultados[index])}')
                     index += 1
             print('')
 
@@ -117,10 +116,10 @@ class ConsultasSQL(Bbdd):
             index = 0
             for i in df:
                 if index == 0:
-                    print(f'\t - {i} = {resultados[index]}')
+                    print(f'\t - {self.color_nombre(i)} = {self.descripcion_color(resultados[index])}')
                     index += 1
                 else:
-                    print(f'\t - {i} = {resultados[index]} %')
+                    print(f'\t - {self.color_nombre(i)} = {self.descripcion_color(resultados[index])} %')
                     index += 1
             print('')
 
@@ -206,7 +205,7 @@ class ConsultasSQL(Bbdd):
             if jornada == mostrar_jornada or mostrar_jornada == '':
                 print('\n')
                 # Mostramos la jornada
-                print(jornada)
+                print(self.color_nombre(jornada))
                 # Separamos los datos de la jornada
                 datos_jornada = jornada_goleador[jornada]
                 # Los goles en una variable
@@ -214,7 +213,7 @@ class ConsultasSQL(Bbdd):
                 # Los equipos en otra, ordenados alfabeticamente ascendente
                 equipos = sorted(datos_jornada[1]["equipos"])
                 # Mostramos los goles
-                print(f'Cantidad maxima de goles de la jornada: {gol}')
+                print(f'Cantidad maxima de goles de la jornada: {self.descripcion_color(gol)}')
 
                 # Diferenciamos si es un equipo o varios
                 if len(equipos) == 1:
@@ -226,13 +225,13 @@ class ConsultasSQL(Bbdd):
                 cont = 0
                 for equipo in equipos:
                     if cont == 0:
-                        print(equipos[cont], end='')
+                        print(self.descripcion_color(equipos[cont]), end='')
                         cont += 1
                     else:
-                        print(',', equipos[cont], end='')
+                        print(',', self.descripcion_color(equipos[cont]), end='')
                         cont += 1
 
-        print('\n')
+        print('')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return jornada_goleador
@@ -251,16 +250,16 @@ class ConsultasSQL(Bbdd):
          # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(f'''
-El equipo puntero del campeonato es {resultado[0].upper()}.
-Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
-- Ganó {resultado[2]} 
-- Empató {resultado[3]}
-- Perdió {resultado[4]}
-Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
+El equipo puntero del campeonato es {self.color_nombre(resultado[0].upper())}.
+Con {self.descripcion_color(resultado[8])} puntos y {self.descripcion_color(resultado[1])} partidos jugados, de los cuales: 
+- Ganó {self.descripcion_color(resultado[2])} 
+- Empató {self.descripcion_color(resultado[3])}
+- Perdió {self.descripcion_color(resultado[4])}
+Convirtió {self.descripcion_color(resultado[5])} goles y le hicieron {self.descripcion_color(resultado[6])}.
 		    ''')
-            print('\nTABLA DE POSICIONES COMPLETA\n')
-            print(df.head(28))
-            print('\n')
+            print(f'\n{self.color_nombre("TABLA DE POSICIONES COMPLETA")}\n')
+            print(self.tabla_color(df.head(28)))
+            print('')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
@@ -277,12 +276,12 @@ Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
          # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(f'''
-El equipo goleador del campeonato es {resultado[0].upper()}.
-Con {resultado[5]} goles convertidos.
+El equipo goleador del campeonato es {self.color_nombre(resultado[0].upper())}.
+Con {self.descripcion_color(resultado[5])} goles convertidos.
             ''')
-            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
-            print(df.head(5))
-            print('\n')
+            print(f'\n{self.color_nombre("TABLA DE POSICIONES (Los 5 mejores)")}\n')
+            print(self.tabla_color(df.head(5)))
+            print('')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
@@ -320,13 +319,13 @@ Con {resultado[5]} goles convertidos.
         # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(f'''
-El equipo con mayor cantidad de partidos ganados de local es {resultado[0].upper()}.
-Con {resultado[2]} partidos ganados entre {resultado[1]} partidos disputados.
-Su promedio fue de {resultado[9]} % de efectividad de local
+El equipo con mayor cantidad de partidos ganados de local es {self.color_nombre(resultado[0].upper())}.
+Con {self.descripcion_color(resultado[2])} partidos ganados entre {self.descripcion_color(resultado[1])} partidos disputados.
+Su promedio fue de {self.descripcion_color(resultado[9])} % de efectividad de local
             ''')
-            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
-            print(df.head(5))
-            print('\n')
+            print(f'\n{self.color_nombre("TABLA DE POSICIONES (Los 5 mejores)")}\n')
+            print(self.tabla_color(df.head(5)))
+            print('')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
@@ -343,7 +342,7 @@ Su promedio fue de {resultado[9]} % de efectividad de local
         df = pd.read_sql_query(query, conexion)
         # Damos a elegir si se quiere mostrar por terminal
         if terminal:
-            print(f'\n{df}')
+            print(f'\n{self.tabla_color(df)}')
 
         # Devolvemos los resultados para realizar los gráficos
         return df
@@ -360,16 +359,16 @@ Su promedio fue de {resultado[9]} % de efectividad de local
         # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(f'''
-El equipo con menos puntos del campeonato es {resultado[0].upper()}.
-Con {resultado[8]} puntos y {resultado[1]} partidos jugados, de los cuales: 
-- Ganó {resultado[2]} 
-- Empató {resultado[3]}
-- Perdió {resultado[4]}
-Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
+El equipo con menos puntos del campeonato es {self.color_nombre(resultado[0].upper())}.
+Con {self.descripcion_color(resultado[8])} puntos y {self.descripcion_color(resultado[1])} partidos jugados, de los cuales: 
+- Ganó {self.descripcion_color(resultado[2])} 
+- Empató {self.descripcion_color(resultado[3])}
+- Perdió {self.descripcion_color(resultado[4])}
+Convirtió {self.descripcion_color(resultado[5])} goles y le hicieron {self.descripcion_color(resultado[6])}.
             ''')
-            print('\nTABLA DE POSICIONES (Los 5 peores)\n')
-            print(df.head(5))
-            print('\n')
+            print(f'\n{self.color_nombre("TABLA DE POSICIONES (Los 5 peores)")}\n')
+            print(self.tabla_color(df.head(5)))
+            print('')
 
         # Devolvemos los resultados para realizar de ser necesario, el grafico.
         return df
@@ -390,11 +389,11 @@ Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
         # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(
-                f'\nEl equipo que recibió más goles es: {resultado[0].upper()}, con un total de {resultado[1]} goles.')
+                f'\nEl equipo que recibió más goles es: {self.color_nombre(resultado[0].upper())}, con un total de {self.descripcion_color(resultado[1])} goles.')
 
-            print('\nTABLA DE POSICIONES (Los 5 peores)\n')
-            print(df.head(5))
-            print('\n')
+            print(f'\n{self.color_nombre("TABLA DE POSICIONES (Los 5 peores)")}\n')
+            print(self.tabla_color(df.head(5)))
+            print('')
 
         return df
 
@@ -420,14 +419,25 @@ Convirtió {resultado[5]} goles y le hicieron {resultado[6]}.
         # Damos a elegir si se quiere mostrar por terminal
         if terminal:
             print(f'''
-El equipo con más victorias de visitantes es {resultado[0].upper()}
-- Partidos jugados de visitante: {resultado[2]}
-- Partidos ganados: {resultado[1]}
-- Su promedio es de {resultado[3]}% de efectividad de visitante.
+El equipo con más victorias de visitantes es {self.color_nombre(resultado[0].upper())}
+- Partidos jugados de visitante: {self.descripcion_color(resultado[2])}
+- Partidos ganados: {self.descripcion_color(resultado[1])}
+- Su promedio es de {self.descripcion_color(resultado[3])}% de efectividad de visitante.
                 ''')
-            print('\nTABLA DE POSICIONES (Los 5 mejores)\n')
-            print(df.head(5))
-            print('\n')
+            print(f'\n{self.tabla_color("TABLA DE POSICIONES (Los 5 mejores)")}\n')
+            print(self.tabla_color(df.head(5)))
+            print('')
 
         return df
 
+    def color_nombre(self,nombre):
+        coloreado = "\033[4;36m" + str(nombre) + "\033[0;m"
+        return coloreado
+
+    def descripcion_color(self, descripcion):
+        coloreado = "\033[1;31m" + str(descripcion) + "\033[0;m"
+        return coloreado
+    
+    def tabla_color(self, tabla):
+        coloreado = "\033[1;33m" + str(tabla) + "\033[0;m"
+        return coloreado

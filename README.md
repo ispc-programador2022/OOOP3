@@ -38,6 +38,6 @@
 ```
 $ git clone https://github.com/ispc-programador2022/OOOP3.git
 $ cd ../path/to/the/file
-$ pip install requirements.txt -r
+$ pip install -r requirements.txt 
 $ python main.py
 ```
