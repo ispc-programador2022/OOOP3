@@ -7,11 +7,17 @@ import os
 from random import randrange
 from colorama import Fore
 
-class InicioMain():
-    def __init__(self):
-        self.usuario = input("\nHOLA! Antes de comenzar ingrese su nombre: ")
-        
 
+class InicioMain():
+    def __init__(self, actualizacion_paquetes):
+        if actualizacion_paquetes == True:
+            print('\nHOLA! Después de esa pequeña configuración, ahora sí podemos comenzar...')
+            time.sleep(1)
+            self.usuario = input("\nComo es tu nombre?  ")
+        else:
+            self.usuario = input("\nHOLA! Antes de comenzar, como es tu nombre? ")
+
+        
     def dialogo(self):
         time.sleep(1)
         print(f"\nBIENVENID@ {self.color_nombre(self.usuario.upper())}. \nESTA ES UNA SIMPLE APP QUE REALIZAMOS ENTRE {self.color_nombre('MARTINA OCTTINGER')} Y {self.color_nombre('MARTIN ARIEL OLLER')}.")
@@ -115,8 +121,6 @@ class InicioMain():
         finally:
             self.despedida()
 
-
-
     def iniciar_datos(self):
         print(f'\nEsto va a demorar un poco {self.color_nombre(self.usuario.title())}, si es la primera vez que se ingresan los datos. ')
         bd = Bbdd()
@@ -216,4 +220,8 @@ class InicioMain():
 
     def advertencia_color(self, advertencia):
         coloreado = "\033[1;31m" + str(advertencia) + "\033[0;m"
+        return coloreado
+
+    def aviso_color(self, tabla):
+        coloreado = "\033[1;33m" + str(tabla) + "\033[0;m"
         return coloreado
